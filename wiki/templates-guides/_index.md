@@ -1,0 +1,150 @@
+# Templates Guides
+
+_index for all 146 lessons._
+
+- [[001-upgrade-to-vip-premium-or-plus]] — 🔥Upgrade to VIP, Premium, or Plus!
+- [[002-11-mentorship]] — 🥇1:1 Mentorship
+- [[003-top-10-claude-code-addons-4926]] — Top 10 Claude Code Addons (4/9/26)
+- [[004-35-claude-code-concepts-4826]] — 35 Claude Code Concepts (4/8/26)
+- [[005-caveman-claude-4726]] — Caveman Claude (4/7/26)
+- [[006-ultraplan-4626]] — Ultraplan (4/6/26)
+- [[007-karpathy-obsidian-rag-4426]] — Karpathy Obsidian "RAG" (4/4/26)
+- [[008-rag-anything-4226]] — RAG Anything (4/2/26)
+- [[009-lightrag-claude-code-4126]] — LightRAG + Claude Code (4/1/26)
+- [[010-codex-claude-code-4126]] — Codex + Claude Code (4/1/26)
+- [[011-content-machine-33126]] — Content Machine (3/31/26)
+- [[012-firecrawl-33031]] — Firecrawl (3/30/31)
+- [[013-5-open-source-repos-32926]] — 5 Open Source Repos (3/29/26)
+- [[014-9-claude-code-hacks-32726]] — 9 Claude Code Hacks (3/27/26)
+- [[015-100k-website-clones-32726]] — $100k Website Clones (3/27/26)
+- [[016-7-levels-of-claude-code-design-32626]] — 7 Levels of Claude Code Design (3/26/26)
+- [[017-dream-32426]] — /dream (3/24/26)
+- [[018-claudemd-is-a-problem-32326]] — claude.md Is a Problem (3/23/26)
+- [[019-claude-code-in-2026-guide-32226]] — Claude Code in 2026 Guide (3/22/26)
+- [[020-10-cli-tools-32226]] — 10 CLI Tools (3/22/26)
+- [[021-claude-code-stitch-31926]] — Claude Code + Stitch (3/19/26)
+- [[022-claude-code-free-local-private-31826]] — Claude Code: Free, Local, Private (3/18/26)
+- [[023-gsd-20-31726]] — GSD 2.0 (3/17/26)
+- [[024-animated-websites-31626]] — Animated Websites (3/16/26)
+- [[025-paperclip-ai-agent-businesses-31526]] — Paperclip & "AI Agent Businesses" (3/15/26)
+- [[026-1-million-context-window-update-31426]] — 1 Million Context Window Update (3/14/26)
+- [[027-embedding-2-rag-31226]] — Embedding 2 RAG (3/12/26)
+- [[028-cli-anything-31126]] — CLI-Anything (3/11/26)
+- [[029-google-workspace-cli-cc-31026]] — Google Workspace CLI + CC (3/10/26)
+- [[030-10x-claude-code-plugins-3926]] — 10x Claude Code Plugins (3/9/26)
+- [[031-6-levels-of-claude-code-3826]] — 6 Levels of Claude Code (3/8/26)
+- [[032-claude-code-for-non-coders-the-guide]] — Claude Code for Non Coders: The Guide
+- [[033-567-hours-of-claude-code-in-20-minutes]] — 567 Hours of Claude Code in 20 Minutes
+- [[034-claude-code-notebooklm-obsidian]] — Claude Code + NotebookLM + Obsidian
+- [[035-claude-code-notebooklm]] — Claude Code + NotebookLM
+- [[036-claude-code-obsidian]] — Claude Code + Obsidian
+- [[037-3d-websites-with-claude-code-nano-banana-2]] — 3D Websites with Claude Code + Nano Banana 2
+- [[038-n8n-mcp-claude-code-prompt-to-agents]] — n8n-mcp + Claude Code = Prompt to Agents?
+- [[039-turn-n8n-workflow-into-ai-saas]] — Turn n8n Workflow into AI SaaS
+- [[040-claude-code-web-design]] — Claude Code Web Design
+- [[041-claude-code-n8n-to-deployed-app]] — Claude Code: n8n to Deployed App
+- [[042-agent-teams]] — Agent Teams
+- [[043-n8n-to-claude-code-build]] — n8n to Claude Code build
+- [[044-claude-code-remotion]] — Claude Code + Remotion
+- [[045-the-new-claude-code-meta-gsd]] — The New Claude Code Meta (GSD)
+- [[046-sonnet-45-ai-agents]] — Sonnet 4.5 AI Agents
+- [[047-google-ai-studio-vibe-coder]] — Google AI Studio Vibe Coder
+- [[048-gemini-3-prompt-creates-stunning-websites]] — Gemini 3 Prompt Creates Stunning Websites
+- [[049-ralph-loops]] — Ralph Loops
+- [[050-context-rot]] — Context Rot
+- [[051-converting-n8n-to-real-code]] — Converting n8n to Real Code
+- [[052-the-openclaw-scam]] — The OpenClaw Scam
+- [[053-playwright-claude-code]] — Playwright + Claude Code
+- [[054-agent-loops]] — Agent Loops
+- [[055-n8n-masterclass-part-1]] — n8n Masterclass Part 1
+- [[056-n8n-masterclass-part-2]] — n8n Masterclass Part 2
+- [[057-n8n-masterclass-part-3]] — n8n Masterclass Part 3
+- [[058-n8n-masterclass-part-4]] — n8n Masterclass Part 4
+- [[059-n8n-masterclass-part-5]] — n8n Masterclass Part 5
+- [[060-n8n-masterclass-part-6]] — n8n Masterclass Part 6
+- [[061-n8n-masterclass-part-7]] — n8n Masterclass Part 7
+- [[062-n8n-masterclass-part-8]] — n8n Masterclass Part 8
+- [[063-n8n-masterclass-5-hour-edition]] — n8n Masterclass: 5 Hour Edition
+- [[064-n8n-essentials-in-25-minutes]] — n8n Essentials in 25 Minutes
+- [[065-top-10-n8n-nodes-to-master]] — Top 10 n8n Nodes to Master
+- [[066-ai-fundamentals]] — AI Fundamentals
+- [[067-ai-agent-primer]] — AI Agent Primer
+- [[068-google-credentials-setup]] — Google Credentials Setup
+- [[069-personal-assistant-ai-agent]] — Personal Assistant AI Agent
+- [[070-giving-our-ai-agent-a-voice-and-a-website]] — Giving Our AI Agent a Voice (And a Website!)
+- [[071-music-image-creation-automation]] — Music + Image Creation Automation
+- [[072-my-4-step-process-for-building-ai-agents]] — My 4 Step Process for Building AI Agents
+- [[073-creating-web-apps-with-n8n-lovable]] — Creating Web Apps With n8n + Lovable
+- [[074-the-four-types-of-ai-agents-that-actually-sell]] — The Four Types of AI Agents That Actually Sell
+- [[075-2-step-ai-agency-blueprint]] — 2 Step AI Agency Blueprint
+- [[076-top-10-n8n-tips-tricks]] — Top 10 n8n Tips + Tricks
+- [[077-n8n-workflow-builder]] — n8n Workflow Builder
+- [[078-the-four-types-of-ai-agents-that-sell]] — The Four Types of AI Agents That Sell
+- [[079-gemini-3-n8n-setup]] — Gemini 3 + n8n Setup
+- [[080-how-id-start-my-ai-agency-from-scratch-2026]] — How I'd Start my AI Agency From Scratch 2026
+- [[081-nano-banana-pro-camera-control]] — 🔥Nano Banana Pro Camera Control
+- [[082-one-prompt-9-images-pure-ai-cinema]] — One Prompt. 9 Images. Pure AI Cinema
+- [[083-viral-videos-with-nano-veo-3-for-free]] — Viral Videos with Nano 🍌 + Veo 3 (for free)
+- [[084-nano-banana-n8n-guide-no-code-ugc-tutorial]] — Nano Banana & n8n Guide (No Code UGC Tutorial)
+- [[085-guide-how-to-make-viral-exploding-videos]] — Guide: How to Make Viral "Exploding" Videos
+- [[086-sora-2-n8n]] — Sora 2 + n8n
+- [[087-wan-25-the-veo3-killer]] — Wan 2.5 (the veo3 killer)
+- [[088-higgsfield-popcorn]] — Higgsfield Popcorn
+- [[089-nano-banana-content-machine]] — Nano Banana Content Machine
+- [[090-veo3-n8n-skeleton]] — Veo3 + n8n Skeleton
+- [[091-frame-to-frame-videos]] — Frame to Frame Videos
+- [[092-create-4k-60-fps-seedream-nano-videos]] — Create 4K 60 FPS Seedream / Nano 🍌 Videos
+- [[093-automate-ai-viral-videos-w-veo3_fast-kieapi]] — Automate AI Viral Videos w/ Veo3_Fast + KieAPI
+- [[094-nano-veo3-content-engine]] — Nano 🍌 + Veo3 Content Engine
+- [[095-ai-influencers-11-labs]] — AI influencers + 11 labs
+- [[096-kling-3]] — Kling 3
+- [[097-ai-email-assistant]] — AI Email Assistant
+- [[098-gmail-suite-ai-agent]] — Gmail Suite AI Agent
+- [[099-linkedin-scrapercold-outreach-oct-25]] — LinkedIn Scraper/Cold Outreach (Oct '25)
+- [[100-google-maps-scraper-data-tables]] — Google Maps Scraper + Data Tables
+- [[101-n8n-data-tables]] — n8n Data Tables
+- [[102-stock-analyzer-ai-agent]] — Stock Analyzer AI Agent
+- [[103-stock-crypto-analyzer-20]] — Stock + Crypto Analyzer 2.0
+- [[104-meeting-prep-monster-20]] — Meeting Prep Monster 2.0
+- [[105-ai-agent-tier-list-sept-2025]] — AI Agent Tier List (Sept 2025)
+- [[106-steal-their-linkedin-content-strategy]] — Steal Their LinkedIn Content Strategy
+- [[107-what-you-need-to-know-about-gpt-5]] — What You Need to Know About GPT-5
+- [[108-scraping-with-apify]] — Scraping with Apify
+- [[109-clone-a-youtuber]] — Clone a Youtuber
+- [[110-steal-anyones-viral-video-strategy]] — Steal Anyone's Viral Video Strategy
+- [[111-how-to-create-ai-ads-that-dont-suck]] — How to Create AI Ads That Don't Suck
+- [[112-automatically-create-post-carousels-to-socials]] — Automatically Create + Post Carousels to Socials
+- [[113-custom-newsletter-ai-workflow]] — Custom Newsletter AI Workflow
+- [[114-social-media-poster-9-platforms]] — Social Media Poster (9 Platforms)
+- [[115-destroy-your-content-backlog]] — Destroy Your Content Backlog
+- [[116-gpt-airtable-design-team]] — GPT + Airtable Design Team
+- [[117-create-your-ai-clone-heygen]] — Create Your AI Clone (HeyGen)
+- [[118-written-content-ai-agent]] — Written Content AI Agent
+- [[119-175k-followers-content-automation]] — 175k Followers Content Automation
+- [[120-one-template-infinite-ugc-ads]] — One Template. Infinite UGC Ads.
+- [[121-perfect-ai-ads-product-consistency]] — Perfect AI Ads + Product Consistency
+- [[122-simple-rag]] — Simple RAG
+- [[123-rag-reranking-july-25]] — RAG + Reranking (July '25)
+- [[124-graphrag]] — graphRAG
+- [[125-agentic-rag-excel]] — Agentic RAG + Excel
+- [[126-outbound-voice-agent]] — Outbound Voice Agent
+- [[127-inbound-voice-agent]] — Inbound Voice Agent
+- [[128-local-hosting-n8n-open-source-llms]] — Local Hosting n8n & Open Source LLMs
+- [[129-mcp-n8n-intro]] — MCP + n8n Intro
+- [[130-self-host-with-hostinger]] — Self Host with Hostinger
+- [[131-firecrawl-mcp]] — Firecrawl MCP
+- [[132-self-hosting-n8n-w-render-digital-ocean]] — Self Hosting n8n w/ Render + Digital Ocean
+- [[133-ai-app-workflow-fundamentals]] — AI App Workflow Fundamentals
+- [[134-create-a-note-taking-app-with-bolt]] — Create a Note Taking App With Bolt
+- [[135-canva-make-automation]] — Canva + Make Automation
+- [[136-intro-to-make]] — Intro to Make
+- [[137-boltnew-intro]] — Bolt.new Intro
+- [[138-linkedin-30-archived]] — LinkedIn 3.0 (ARCHIVED)
+- [[139-google-maps-archived]] — Google Maps (ARCHIVED)
+- [[140-linkedin-scraper-20-archived]] — LinkedIn Scraper 2.0 (ARCHIVED)
+- [[141-linkedin-scraper-archived]] — LinkedIn Scraper (Archived)
+- [[142-apollo-lead-generation-archive]] — Apollo Lead Generation (Archive)
+- [[143-faceless-video-generation]] — Faceless Video Generation
+- [[144-the-new-content-powerhouse]] — The New Content Powerhouse
+- [[145-rag]] — RAG
+- [[146-rag-voice-frontend]] — RAG + Voice + Frontend

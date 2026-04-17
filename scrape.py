@@ -1,246 +1,221 @@
 """
-Chase AI Skool Scraper
-Scrapes all course content from the Chase AI community and saves to raw/
-
-Usage:
-  1. Export cookies from Chrome (EditThisCookie extension → Export as JSON)
-  2. Save cookies to cookies.json in this directory
-  3. python3 scrape.py
+Chase AI Skool Scraper — reads __NEXT_DATA__ to extract full course tree.
+Saves each lesson as a markdown file in raw/{course}/{lesson}.md
+Usage: python3 scrape.py
 """
 import asyncio
 import json
-import os
 import re
 import time
 from pathlib import Path
 from playwright.async_api import async_playwright
 
-SKOOL_COMMUNITY = "https://www.skool.com/chase-ai-community"
-COOKIES_FILE = Path(__file__).parent / "cookies.json"
+SKOOL_BASE = "https://www.skool.com"
+COMMUNITY = "chase-ai-community"
+COOKIES_FILE = Path(__file__).parent / "cookies.txt"
 RAW_DIR = Path(__file__).parent / "raw"
 RAW_DIR.mkdir(exist_ok=True)
 
 
-def safe_filename(text: str) -> str:
+def safe(text: str) -> str:
     text = re.sub(r'[^\w\s-]', '', text).strip()
-    text = re.sub(r'[\s]+', '-', text)
-    return text[:80].lower()
+    return re.sub(r'\s+', '-', text)[:70].lower()
 
 
-async def load_cookies(context, path: Path):
-    with open(path) as f:
-        raw = json.load(f)
-
+def load_cookies_list() -> list:
     cookies = []
-    for c in raw:
-        cookie = {
-            "name": c.get("name", ""),
-            "value": c.get("value", ""),
-            "domain": c.get("domain", ".skool.com"),
-            "path": c.get("path", "/"),
-            "secure": c.get("secure", True),
-            "httpOnly": c.get("httpOnly", False),
-        }
-        if "expirationDate" in c:
-            cookie["expires"] = int(c["expirationDate"])
-        if cookie["name"] and cookie["value"]:
-            cookies.append(cookie)
-
-    await context.add_cookies(cookies)
-    print(f"  Loaded {len(cookies)} cookies")
-
-
-async def scrape_classroom(page) -> list[dict]:
-    """Get all courses/modules from the classroom tab."""
-    print("\nNavigating to classroom...")
-    await page.goto(f"{SKOOL_COMMUNITY}/classroom", wait_until="networkidle", timeout=30000)
-    await page.wait_for_timeout(2000)
-
-    # Get all course cards
-    courses = []
-    cards = await page.query_selector_all('[class*="course"], [class*="Course"], a[href*="/classroom/"]')
-
-    for card in cards:
-        href = await card.get_attribute("href")
-        text = await card.inner_text()
-        if href and "/classroom/" in href:
-            courses.append({
-                "title": text.strip()[:80],
-                "url": href if href.startswith("http") else f"https://www.skool.com{href}"
+    with open(COOKIES_FILE) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            parts = line.split('\t')
+            if len(parts) < 7:
+                continue
+            domain, _, path, secure, expiry, name, value = parts[:7]
+            cookies.append({
+                'name': name, 'value': value, 'domain': domain, 'path': path,
+                'secure': secure.upper() == 'TRUE',
+                'expires': int(expiry) if expiry.isdigit() else -1,
             })
-
-    # Deduplicate
-    seen = set()
-    unique = []
-    for c in courses:
-        if c["url"] not in seen:
-            seen.add(c["url"])
-            unique.append(c)
-
-    print(f"  Found {len(unique)} courses")
-    return unique
+    return cookies
 
 
-async def scrape_course(page, course: dict) -> list[dict]:
-    """Get all lessons from a course."""
-    await page.goto(course["url"], wait_until="networkidle", timeout=30000)
-    await page.wait_for_timeout(2000)
+def extract_modules(node: dict, path: str = "") -> list[dict]:
+    """Recursively walk the course tree and collect all modules (lessons)."""
+    results = []
+    course = node.get('course', {})
+    unit_type = course.get('unitType', '')
+    meta = course.get('metadata', {})
+    title = meta.get('title', '').strip()
+    # Strip emoji from title for filesystem
+    title_clean = re.sub(r'[^\x00-\x7F]+', '', title).strip()
 
-    lessons = []
-    # Look for lesson links within the course
-    links = await page.query_selector_all('a[href*="/classroom/"]')
-    for link in links:
-        href = await link.get_attribute("href")
-        text = await link.inner_text()
-        if href and href != course["url"] and "/classroom/" in href:
-            url = href if href.startswith("http") else f"https://www.skool.com{href}"
-            if url != course["url"]:
-                lessons.append({"title": text.strip()[:80], "url": url})
+    current_path = f"{path}/{title_clean}" if title_clean else path
 
-    # Deduplicate
-    seen = set()
-    unique = []
-    for l in lessons:
-        if l["url"] not in seen:
-            seen.add(l["url"])
-            unique.append(l)
+    if unit_type == 'module' and meta.get('hasAccess') == 1:
+        results.append({
+            'id': course.get('id'),
+            'name': course.get('name'),
+            'title': title,
+            'title_clean': title_clean or f"module-{course.get('id','')[:8]}",
+            'path': path,
+            'video_link': meta.get('videoLink', ''),
+            'video_id': meta.get('videoId', ''),
+            'resources': meta.get('resources', '[]'),
+        })
 
-    return unique
+    for child in node.get('children', []):
+        results.extend(extract_modules(child, current_path))
+
+    return results
 
 
-async def scrape_lesson(page, lesson: dict) -> str:
-    """Scrape the full text content of a lesson."""
-    await page.goto(lesson["url"], wait_until="networkidle", timeout=30000)
-    await page.wait_for_timeout(2000)
+async def scrape_module(page, course_name: str, module: dict) -> str:
+    """Navigate to a module page and extract its text content."""
+    url = f"{SKOOL_BASE}/{COMMUNITY}/classroom/{course_name}?md={module['id']}"
+    await page.goto(url, wait_until='domcontentloaded', timeout=30000)
+    await page.wait_for_timeout(2500)
 
-    # Get page title
-    title = await page.title()
+    # Get __NEXT_DATA__ for this module
+    try:
+        data = await page.evaluate('() => window.__NEXT_DATA__')
+        pp = data.get('props', {}).get('pageProps', {})
+        selected = pp.get('selectedModule', '')
 
-    # Extract main content text
-    content_parts = []
+        # Try to get rendered text from the lesson content area
+        content_text = ""
+        for sel in ['[class*="PostText"]', '[class*="post-content"]', '[class*="lessonContent"]',
+                    '[class*="moduleContent"]', '[class*="textContent"]', 'article', 'main']:
+            els = await page.query_selector_all(sel)
+            for el in els:
+                t = await el.inner_text()
+                if len(t.strip()) > 50:
+                    content_text = t.strip()
+                    break
+            if content_text:
+                break
 
-    # Try common content selectors
-    selectors = [
-        '[class*="content"]',
-        '[class*="lesson"]',
-        '[class*="post"]',
-        'article',
-        'main',
+    except Exception as e:
+        content_text = f"[Error reading page: {e}]"
+
+    # Parse resources JSON (contains text blocks)
+    resources_md = ""
+    try:
+        resources = json.loads(module['resources']) if module['resources'] else []
+        if isinstance(resources, list):
+            for r in resources:
+                if isinstance(r, dict):
+                    rtype = r.get('type', '')
+                    if rtype == 'text':
+                        resources_md += r.get('content', '') + "\n\n"
+                    elif rtype == 'link':
+                        resources_md += f"- [{r.get('name', r.get('url',''))}]({r.get('url','')})\n"
+                    elif rtype == 'file':
+                        resources_md += f"- File: {r.get('name', '')}\n"
+    except Exception:
+        pass
+
+    # Build markdown output
+    lines = [
+        f"# {module['title']}",
+        f"",
+        f"URL: {page.url}",
+        f"Scraped: {time.strftime('%Y-%m-%d')}",
     ]
-    for sel in selectors:
-        els = await page.query_selector_all(sel)
-        for el in els:
-            text = await el.inner_text()
-            if len(text.strip()) > 100:
-                content_parts.append(text.strip())
-        if content_parts:
-            break
+    if module.get('video_link'):
+        lines.append(f"Video: {module['video_link']}")
+    lines.append("")
+    lines.append("---")
+    lines.append("")
 
-    # Fallback: get all visible text from body
-    if not content_parts:
-        body_text = await page.inner_text("body")
-        content_parts.append(body_text)
+    if resources_md:
+        lines.append("## Resources")
+        lines.append(resources_md)
 
-    content = "\n\n".join(content_parts)
+    if content_text:
+        lines.append("## Content")
+        lines.append(content_text)
 
-    # Remove excessive whitespace
-    content = re.sub(r'\n{4,}', '\n\n\n', content)
-
-    return f"# {title}\n\nURL: {lesson['url']}\nScraped: {time.strftime('%Y-%m-%d')}\n\n---\n\n{content}"
-
-
-async def scrape_community_posts(page, max_posts: int = 50) -> list[str]:
-    """Scrape recent community posts."""
-    print("\nScraping community posts...")
-    await page.goto(f"{SKOOL_COMMUNITY}", wait_until="networkidle", timeout=30000)
-    await page.wait_for_timeout(2000)
-
-    posts = []
-    post_links = await page.query_selector_all('a[href*="/p/"]')
-
-    seen = set()
-    for link in post_links[:max_posts]:
-        href = await link.get_attribute("href")
-        if href and href not in seen:
-            seen.add(href)
-            url = href if href.startswith("http") else f"https://www.skool.com{href}"
-            posts.append(url)
-
-    print(f"  Found {len(posts)} post links")
-    return posts
+    return "\n".join(lines)
 
 
 async def main():
-    if not COOKIES_FILE.exists():
-        print(f"ERROR: cookies.json not found at {COOKIES_FILE}")
-        print("Export cookies from Chrome using EditThisCookie extension and save as cookies.json")
-        return
+    cookies = load_cookies_list()
+    print(f"Loaded {len(cookies)} cookies")
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)  # headless=False so you can see it
-        context = await browser.new_context(
-            viewport={"width": 1280, "height": 900},
-            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        browser = await p.chromium.launch(headless=True)
+        ctx = await browser.new_context(
+            viewport={'width': 1280, 'height': 900},
+            user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
         )
+        await ctx.add_cookies(cookies)
+        page = await ctx.new_page()
 
-        await load_cookies(context, COOKIES_FILE)
-        page = await context.new_page()
+        # ── Get all courses ──────────────────────────────────────────────────
+        print("\nLoading classroom index...")
+        await page.goto(f"{SKOOL_BASE}/{COMMUNITY}/classroom", wait_until='domcontentloaded', timeout=30000)
+        await page.wait_for_timeout(4000)
 
-        # Verify login
-        print("Verifying login...")
-        await page.goto(SKOOL_COMMUNITY, wait_until="networkidle", timeout=30000)
-        await page.wait_for_timeout(2000)
+        data = await page.evaluate('() => window.__NEXT_DATA__')
+        all_courses = data['props']['pageProps']['allCourses']
+        accessible = [c for c in all_courses if c.get('metadata', {}).get('hasAccess') == 1]
 
-        current_url = page.url
-        if "login" in current_url or "sign" in current_url:
-            print("ERROR: Not logged in — check your cookies")
-            await browser.close()
-            return
+        print(f"Accessible courses: {len(accessible)}")
+        for c in accessible:
+            print(f"  [{c['metadata']['numModules']} lessons] {c['metadata']['title']}")
 
-        print(f"  Logged in — at {current_url}")
+        # ── Scrape each course ───────────────────────────────────────────────
+        total_saved = 0
+        total_skipped = 0
 
-        # Scrape classroom
-        try:
-            courses = await scrape_classroom(page)
+        for course_meta in accessible:
+            course_title = course_meta['metadata']['title']
+            course_name = course_meta['name']  # short slug e.g. "4fe79bd0"
+            course_id = course_meta['id']
 
-            total_lessons = 0
-            for i, course in enumerate(courses):
-                course_slug = safe_filename(course["title"]) or f"course-{i}"
-                course_dir = RAW_DIR / course_slug
-                course_dir.mkdir(exist_ok=True)
+            print(f"\n{'='*60}")
+            print(f"Course: {course_title}")
 
-                print(f"\nCourse: {course['title']}")
-                lessons = await scrape_course(page, course)
+            # Load course page to get full module tree
+            await page.goto(
+                f"{SKOOL_BASE}/{COMMUNITY}/classroom/{course_id}",
+                wait_until='domcontentloaded', timeout=30000
+            )
+            await page.wait_for_timeout(3000)
 
-                if not lessons:
-                    # The course page itself might be the content
-                    lessons = [course]
+            course_data = await page.evaluate('() => window.__NEXT_DATA__')
+            course_node = course_data['props']['pageProps']['course']
+            modules = extract_modules(course_node)
+            print(f"  {len(modules)} accessible modules")
 
-                print(f"  {len(lessons)} lessons")
+            course_dir = RAW_DIR / safe(course_title)
+            course_dir.mkdir(exist_ok=True)
 
-                for j, lesson in enumerate(lessons):
-                    lesson_slug = safe_filename(lesson["title"]) or f"lesson-{j}"
-                    out_file = course_dir / f"{j+1:02d}-{lesson_slug}.md"
+            for i, mod in enumerate(modules):
+                # Use section path + title for filename
+                section = safe(mod['path'].split('/')[-1]) if mod['path'] else ''
+                filename = f"{i+1:03d}-{safe(mod['title_clean'])}.md"
+                out_file = course_dir / filename
 
-                    if out_file.exists():
-                        print(f"  SKIP (exists): {lesson['title'][:50]}")
-                        continue
+                if out_file.exists():
+                    total_skipped += 1
+                    continue
 
-                    print(f"  Scraping: {lesson['title'][:50]}...")
-                    try:
-                        content = await scrape_lesson(page, lesson)
-                        out_file.write_text(content)
-                        total_lessons += 1
-                        await page.wait_for_timeout(500)  # polite delay
-                    except Exception as e:
-                        print(f"    ERROR: {e}")
+                print(f"  [{i+1}/{len(modules)}] {mod['title'][:60]}")
+                try:
+                    content = await scrape_module(page, course_name, mod)
+                    out_file.write_text(content)
+                    total_saved += 1
+                    await asyncio.sleep(0.3)
+                except Exception as e:
+                    print(f"    ERROR: {e}")
 
-        except Exception as e:
-            print(f"Classroom scrape failed: {e}")
-
-        print(f"\nDone — scraped content saved to raw/")
+        print(f"\n{'='*60}")
+        print(f"Done — {total_saved} saved, {total_skipped} skipped (already existed)")
         await browser.close()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     asyncio.run(main())

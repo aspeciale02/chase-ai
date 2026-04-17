@@ -15,7 +15,7 @@ import time
 from pathlib import Path
 from playwright.async_api import async_playwright
 
-SKOOL_COMMUNITY = "https://www.skool.com/chase-ai"
+SKOOL_COMMUNITY = "https://www.skool.com/chase-ai-community"
 COOKIES_FILE = Path(__file__).parent / "cookies.json"
 RAW_DIR = Path(__file__).parent / "raw"
 RAW_DIR.mkdir(exist_ok=True)
